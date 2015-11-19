@@ -1,0 +1,37 @@
+# Set the base image to use to ubuntu
+FROM ubuntu:latest
+
+# Set the file maintainer (your name - the file's author)
+MAINTAINER Rain Li, Sam Bible
+
+WORKDIR /srv
+RUN mkdir life_support
+
+ENV SRVPROJ=/srv/life_support/
+
+RUN apt-get update
+# Install GO
+
+# Install Nginx
+RUN apt-get install nginx --force-yes -y
+
+EXPOSE 80
+
+# setup all the configfiles for nginx
+COPY ./life_support_nginx.conf /etc/nginx/sites-available/
+RUN ln -s /etc/nginx/sites-available/asf_nginx.conf /etc/nginx/sites-enabled/life_support_nginx.conf
+RUN rm /etc/nginx/sites-enabled/default
+
+WORKDIR $SRVPROJ
+RUN echo $SRVPROJ
+
+# copy life_support GO scripts
+COPY ./life_support $SRVPROJ
+WORKDIR $SRVPROJ
+
+
+
+COPY ./docker-entrypoint.sh /
+RUN chmod +x /docker-entrypoint.sh
+
+ENTRYPOINT ["/docker-entrypoint.sh"]
