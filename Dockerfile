@@ -3,13 +3,19 @@
 FROM golang
 
 # Copy the local package files to the container's workspace.
-# ADD ./life_support /go/src/life_support
+ADD ./life_support /go/src/life_support
 
+WORKDIR /go/src/life_support
 # Build the life_support command inside the container.
-#RUN go install /life_support/plug
-RUN sleep 500
+RUN go install 
 # Run the outyet command by default when the container starts.
-ENTRYPOINT /go/bin/life_support/plug
+#ENTRYPOINT /go/bin/life_support
+
+
+COPY ./docker-entrypoint.sh /
+RUN chmod +x /docker-entrypoint.sh
+
+ENTRYPOINT ["/docker-entrypoint.sh"]
 
 # Document that the service listens on port 80
 EXPOSE 80
